@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Voice Emotion Recognition</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-image: url('mini1.jpg'); /* Replace 'background.jpg' with your image URL */
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            margin: 0;
+            padding: 0;
+        }
+
+        .container {
+            text-align: center;
+            background-image: url('mini2.jpg'); /* Replace 'container-background.jpg' with your container image URL */
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.3);
+            border: none !important; /* Added to ensure border removal */
+            overflow: hidden; /* Added to prevent inner content from overflowing */
+            color: white;
+        }
+
+        #upload-btn {
+            padding: 10px 20px;
+            background-color: #3498db;
+            color: white;
+            border: none;
+            cursor: pointer;
+            margin-bottom: 20px;
+        }
+
+        #emotion-output {
+            font-size: 24px;
+            margin-bottom: 20px;
+        }
+
+        #audio-waveform {
+            margin-top: 30px;
+            width: calc(100% - 40px); /* Adjusted width calculation to account for padding */
+            max-width: 600px;
+            height: 200px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <h1>Voice Emotion Recognition</h1>
+        <input type="file" id="audio-file" accept="audio/*" style="display: none;">
+        <button id="upload-btn">Upload Voice</button>
+        <div id="emotion-output"></div>
+        <canvas id="audio-waveform"></canvas>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/wavesurfer.js"></script>
+    <script>
+        document.getElementById('upload-btn').addEventListener('click', function () {
+            document.getElementById('audio-file').click();
+        });
+
+        document.getElementById('audio-file').addEventListener('change', function () {
+            const file = this.files[0];
+            const reader = new FileReader();
+
+            reader.onload = function (event) {
+                const audioData = event.target.result;
+                recognizeEmotion(audioData);
+                visualizeAudio(audioData);
+            };
+
+            reader.readAsArrayBuffer(file);
+        });
+
+        function recognizeEmotion(audioData) {
+            // Here you would call your backend API or use a library like WebRTC to analyze the emotion from the audio data
+            // For demonstration purposes, let's assume we have an API that returns the emotion
+            const randomEmotion = Math.random() > 0.5 ? 'Happy' : 'Sad';
+            document.getElementById('emotion-output').innerText = 'Emotion: ' + randomEmotion;
+        }
+
+        function visualizeAudio(audioData) {
+            const wavesurfer = WaveSurfer.create({
+                container: '#audio-waveform',
+                waveColor: 'black',
+                progressColor: 'purple'
+            });
+            wavesurfer.loadBlob(new Blob([audioData]));
+        }
+    </script>
+</body>
+
+</html>
