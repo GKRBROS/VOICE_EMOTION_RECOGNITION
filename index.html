@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <title>Voice Emotion Recognition</title>
+    <style>
+        body {
+            font-family: 'Verdana, Geneva, Tahoma, sans-serif';
+            font-size: x-large;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-image: url("/static/gg.jpg");
+            background-size: 1300px 650px;
+            background-position: center;
+            background-repeat: no-repeat;
+        }
+
+        .container {
+            text-align: center;
+            background-image: url("/static/t.jpg");
+            background-size: 800px 300px;
+            background-position: center;
+            background-repeat: no-repeat;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.3);
+            border: none !important;
+            overflow: hidden;
+            color: #ffffff;
+        }
+
+        #custom-file-upload {
+            display: inline-flex;
+            padding: 10px 10px;
+            font-size: 18px;
+            border-radius: 8px;
+            background-color: #000000;
+            cursor: pointer;
+            transition-duration: 0.4s;
+            margin-right: 50px;
+            margin-bottom: 10px;
+            padding: 10px 10px;
+        }
+
+        #custom-file-upload:hover {
+            background-color: #ff0000; /* Green */
+            color: #000000cf;
+        }
+
+        #audio-file {
+            display: none;
+        }
+
+        #upload-btn {
+            display: inline-flex;
+            padding: 10px 10px;
+            font-size: medium;
+            border-radius: 8px;
+            background-color: #070707;
+            color: #ffffff;
+            border: none;
+            cursor: pointer;
+            transition-duration: 0.4s;
+            margin-bottom: 10px;
+            padding: 10px 10px;
+        }
+
+        #upload-btn:hover {
+            background-color: #ff0000; /* Green */
+            color: rgb(0, 0, 0);
+        }
+
+        #emotion-output {
+            font-size: 24px;
+            font-weight: bold;
+            margin-top: 10px;
+            margin-bottom: 1px;
+            color: #000000;
+        }
+        #emoji{
+            margin-bottom: 20px;
+        }
+        #audio-waveform {
+            margin-top: 30px;
+            width: calc(100% - 40px);
+            max-width: 600px;
+            height: 200px;
+        }
+        #p{
+            color: black;
+            background-color: whitesmoke;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <h1 id="p">Voice Emotion Recognition</h1>
+        <label id="custom-file-upload">
+            Choose File
+            <input type="file" id="audio-file" accept="audio/*">
+        </label>
+        <button id="upload-btn" onclick="uploadFile()">Upload Voice</button>
+        <div id="emotion-output"></div>
+        <div id="emoji"></div>
+    </div>
+    <script>
+        function uploadFile() {
+            var file = document.getElementById('audio-file').files[0];
+            var formData = new FormData();
+            formData.append('file', file);
+
+            fetch('/upload', {
+                method: 'POST',
+                body: formData,
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.emotion) {
+                    document.getElementById('emotion-output').innerText = 'Emotion: ' + data.emotion;
+                    // Display emoji based on emotion
+                    displayEmoji(data.emotion);
+                } else {
+                    document.getElementById('emotion-output').innerText = 'Error: ' + data.error;
+                }
+            })
+            .catch(error => console.error('Error:', error));
+        }
+
+        function displayEmoji(emotion) {
+            var emojiDict = {
+                'happy': '😄',
+                'sad': '😢',
+                'angry': '😡',
+                'fear': '😨',
+                'surprise': '😯',
+                'neutral': '😐',
+                'disgust': '🤢',
+                'calm': '😌'
+            };
+            var emoji = emojiDict[emotion] || '❓';
+            document.getElementById('emoji').innerText = emoji;
+        }
+    </script>
+</body>
+
+</html>
